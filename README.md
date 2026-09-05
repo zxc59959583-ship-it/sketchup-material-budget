@@ -18,9 +18,8 @@ Material Budget is a SketchUp extension for early-stage architectural and interi
 
 Current version: **v0.8.0 · SketchUp 2020+**
 
-[Download RBZ](./su_material_budget_v0.8.0_SU2020_compatible.rbz) · [Source](./src) · [Chinese documentation](./README.md)
 
-![Budget dashboard](./assets/budget-dashboard-v0.8.0.png)
+
 
 ## Highlights
 
