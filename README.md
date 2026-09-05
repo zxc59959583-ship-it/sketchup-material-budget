@@ -40,7 +40,7 @@ SketchUp 材质实时预算插件：按吸取材质统计外表皮面积，扣�
 
 集中查看价格表关联、项目总预算、当前成本、材料费、人工费、计价面积和计算进度。
 
-![材质实时预算主界面](./assets/budget-dashboard-v0.8.0.png)<img width="1020" height="1339" alt="budget-dashboard-v0 8 0" src="https://github.com/user-attachments/assets/c392eff0-bd7f-452d-8382-118e4e3ef1b9" />
+<img width="1020" height="1339" alt="budget-dashboard-v0 8 0" src="https://github.com/user-attachments/assets/c392eff0-bd7f-452d-8382-118e4e3ef1b9" />
 
 
 界面中的金额和耗时来自示例模型，用于展示操作流程。未匹配材料和零价项目仍需处理，不能仅凭汇总金额判断预算是否完整。
@@ -49,7 +49,7 @@ SketchUp 材质实时预算插件：按吸取材质统计外表皮面积，扣�
 
 价格表通过标准编码、名称和别名建立材料索引，并保留费用组成、地区、日期和来源等信息。
 
-![价格库预览](./assets/price-library-preview.png)<img width="920" height="587" alt="price-library-guide" src="https://github.com/user-attachments/assets/bdaaef9d-4a93-4fc8-997d-3238d7d0371a" />
+<img width="920" height="587" alt="price-library-guide" src="https://github.com/user-attachments/assets/bdaaef9d-4a93-4fc8-997d-3238d7d0371a" />
 <img width="2744" height="1180" alt="price-library-preview" src="https://github.com/user-attachments/assets/024807ea-adbf-4e51-a6dc-956078911236" />
 
 
