@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="./assets/material-budget-logo.svg" width="320" alt="材质实时预算标志">
-</p>
-
 # 材质实时预算
 
 [中文](./README.md) | [English](./README_EN.md)
@@ -17,7 +13,8 @@
 
 [下载安装包](./su_material_budget_v0.8.0_SU2020_compatible.rbz) · [查看使用说明](./使用说明.md) · [查看源码](./src) · [查看完整迭代](#从第一代到第八代)
 
-![材质实时预算 v0.8.0 主界面](./assets/budget-dashboard-v0.8.0.png)
+<img width="1020" height="1339" alt="budget-dashboard-v0 8 0" src="https://github.com/user-attachments/assets/8c59883c-bf57-4d14-b32a-b0af814ad8e6" />
+
 
 ## 项目简介
 
@@ -45,17 +42,20 @@
 
 主界面集中显示价格表关联、AI 推荐、项目预算、成本构成、面积进度、吸取材质和逐项计价结果。
 
-![预算总览](./assets/budget-dashboard-v0.8.0.png)
+<img width="1020" height="1339" alt="budget-dashboard-v0 8 0" src="https://github.com/user-attachments/assets/08ed98d3-7806-4845-8f97-b8cbd288cd2f" />
+
 
 ### 可追溯价格库
 
 价格表保留标准编码、分类、标准材质名称、别名、费用组成、地区、价格日期和来源页码。仓库内示例数据用于流程演示，正式项目应替换为工作室当期价格。
 
-![价格库预览](./assets/price-library-preview.png)
+<img width="2744" height="1180" alt="price-library-preview" src="https://github.com/user-attachments/assets/299873c0-fa26-450c-83b3-eb3714b40ba4" />
+
 
 ### 价格库字段与使用边界
 
-![价格库使用说明](./assets/price-library-guide.png)
+<img width="920" height="587" alt="price-library-guide" src="https://github.com/user-attachments/assets/92701f53-11bb-40e1-a3de-c69eb6f44caf" />
+
 
 ## 处理流程
 
