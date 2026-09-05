@@ -1,7 +1,8 @@
 # 材质实时预算
 <img width="1974" height="797" alt="ChatGPT Image 2026年9月5日 16_54_06" src="https://github.com/user-attachments/assets/5d183e9a-6641-4f43-9b45-2a64790e28db" />
 
-[中文](./README.md) | [English](./README_EN.md)
+[中文](./README.md) | [English][Uploading README_EN.md…]()
+
 
 > 面向建筑与室内设计方案阶段的 SketchUp 实时预算插件：吸取哪些材质，就计算哪些材质；材质或模型变化后，重新输出净面积、综合单价与项目预算。
 
@@ -12,7 +13,7 @@
 
 当前版本：**v0.8.0 · SketchUp 2020+**
 
-[下载安装包](./su_material_budget_v0.8.0_SU2020_compatible.rbz) · [查看使用说明](./使用说明.md) · [查看源码](./src) · [查看完整迭代](#从第一代到第八代)
+[下载安装包](./su_material_budget_v0.8.0_SU2020_compatible.rbz) ·  [查看完整迭代](#从第一代到第八代)
 
 
 ## 项目简介
