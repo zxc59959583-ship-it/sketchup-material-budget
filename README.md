@@ -49,7 +49,6 @@ SketchUp 材质实时预算插件：按吸取材质统计外表皮面积，扣�
 
 价格表通过标准编码、名称和别名建立材料索引，并保留费用组成、地区、日期和来源等信息。
 
-<img width="920" height="587" alt="price-library-guide" src="https://github.com/user-attachments/assets/bdaaef9d-4a93-4fc8-997d-3238d7d0371a" />
 <img width="2744" height="1180" alt="price-library-preview" src="https://github.com/user-attachments/assets/024807ea-adbf-4e51-a6dc-956078911236" />
 
 
@@ -57,8 +56,8 @@ SketchUp 材质实时预算插件：按吸取材质统计外表皮面积，扣�
 
 统一价格字段和填写口径，方便工作室维护和更新数据。
 
-![价格库使用说明](./assets/price-library-guide.png)
-![Uploading price-library-guide.png…]()
+<img width="920" height="587" alt="price-library-guide" src="https://github.com/user-attachments/assets/4cc09f19-19a0-4ba7-9b94-645cf8300c0c" />
+
 
 ## 主要功能
 
