@@ -1,4 +1,5 @@
 # 材质实时预算
+<img width="1974" height="797" alt="ChatGPT Image 2026年9月5日 16_54_06" src="https://github.com/user-attachments/assets/5d183e9a-6641-4f43-9b45-2a64790e28db" />
 
 [中文](./README.md) | [English](./README_EN.md)
 
@@ -12,8 +13,6 @@
 当前版本：**v0.8.0 · SketchUp 2020+**
 
 [下载安装包](./su_material_budget_v0.8.0_SU2020_compatible.rbz) · [查看使用说明](./使用说明.md) · [查看源码](./src) · [查看完整迭代](#从第一代到第八代)
-
-<img width="1020" height="1339" alt="budget-dashboard-v0 8 0" src="https://github.com/user-attachments/assets/8c59883c-bf57-4d14-b32a-b0af814ad8e6" />
 
 
 ## 项目简介
