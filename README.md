@@ -16,6 +16,10 @@
 
 ## 插件演示视频
 
+
+https://github.com/user-attachments/assets/8fabc8ab-9e55-45fd-8c82-930a10489871
+
+
 [下载完整插件演示（MP4）](https://github.com/zxc59959583-ship-it/sketchup-material-budget/releases/download/plugin-demo/sketchup-material-budget-demo.mp4)
 
 视频记录了插件在 SketchUp 中的完整操作过程。
