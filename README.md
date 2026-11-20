@@ -14,6 +14,12 @@
 [下载安装包](./su_material_budget_v0.8.0_SU2020_compatible.rbz) ·  [查看完整迭代](#从第一代到第八代)
 
 
+## 插件演示视频
+
+[下载完整插件演示（MP4）](https://github.com/zxc59959583-ship-it/sketchup-material-budget/releases/download/plugin-demo/sketchup-material-budget-demo.mp4)
+
+视频记录了插件在 SketchUp 中的完整操作过程。
+
 ## 项目简介
 
 在 SketchUp 方案推敲阶段，材质名称、构件尺寸和构造关系会频繁变化。传统做法通常需要人工读取面积，再到 Excel 中查找单价并汇总；一旦模型或材质发生变化，预算很容易失去同步。
