@@ -1,28 +1,24 @@
-# 材质实时预算
-<img width="1974" height="797" alt="ChatGPT Image 2026年9月5日 16_54_06" src="https://github.com/user-attachments/assets/5d183e9a-6641-4f43-9b45-2a64790e28db" />
+<p align="center">
+  <img src="./assets/material-budget-logo.svg" width="320" alt="材质实时预算标志">
+</p>
 
+# 材质实时预算
+
+[中文](./README.md) | [English](./README_EN.md)
 
 > 面向建筑与室内设计方案阶段的 SketchUp 实时预算插件：吸取哪些材质，就计算哪些材质；材质或模型变化后，重新输出净面积、综合单价与项目预算。
 
-![Version](https://img.shields.io/badge/version-v0.8.0-176B7A)
+![Version](https://img.shields.io/badge/version-v0.9.0-176B7A)
 ![SketchUp](https://img.shields.io/badge/SketchUp-2020%2B-005F9E)
 ![Ruby](https://img.shields.io/badge/Ruby-2.5%2B-CC342D)
 ![Package](https://img.shields.io/badge/package-RBZ-2E8B57)
+![License](https://img.shields.io/badge/license-MIT-4A6FA5)
 
-当前版本：**v0.8.0 · SketchUp 2020+**
+当前版本：**v0.9.0 · SketchUp 2020+**
 
-[下载安装包](./su_material_budget_v0.8.0_SU2020_compatible.rbz) ·  [查看完整迭代](#从第一代到第八代)
+[下载安装包 v0.9.0](./su_material_budget_v0.9.0_SU2020_compatible.rbz) · [查看使用说明](./使用说明.md) · [查看源码](./src) · [查看完整迭代](#从第一代到第九代)
 
-
-## 插件演示视频
-
-
-https://github.com/user-attachments/assets/8fabc8ab-9e55-45fd-8c82-930a10489871
-
-
-[下载完整插件演示（MP4）](https://github.com/zxc59959583-ship-it/sketchup-material-budget/releases/download/plugin-demo/sketchup-material-budget-demo.mp4)
-
-视频记录了插件在 SketchUp 中的完整操作过程。
+![材质实时预算 v0.8.0 主界面](./assets/budget-dashboard-v0.8.0.png)
 
 ## 项目简介
 
@@ -50,20 +46,17 @@ https://github.com/user-attachments/assets/8fabc8ab-9e55-45fd-8c82-930a10489871
 
 主界面集中显示价格表关联、AI 推荐、项目预算、成本构成、面积进度、吸取材质和逐项计价结果。
 
-<img width="1020" height="1339" alt="budget-dashboard-v0 8 0" src="https://github.com/user-attachments/assets/08ed98d3-7806-4845-8f97-b8cbd288cd2f" />
-
+![预算总览](./assets/budget-dashboard-v0.8.0.png)
 
 ### 可追溯价格库
 
 价格表保留标准编码、分类、标准材质名称、别名、费用组成、地区、价格日期和来源页码。仓库内示例数据用于流程演示，正式项目应替换为工作室当期价格。
 
-<img width="2744" height="1180" alt="price-library-preview" src="https://github.com/user-attachments/assets/299873c0-fa26-450c-83b3-eb3714b40ba4" />
-
+![价格库预览](./assets/price-library-preview.png)
 
 ### 价格库字段与使用边界
 
-<img width="920" height="587" alt="price-library-guide" src="https://github.com/user-attachments/assets/92701f53-11bb-40e1-a3de-c69eb6f44caf" />
-
+![价格库使用说明](./assets/price-library-guide.png)
 
 ## 处理流程
 
@@ -87,9 +80,9 @@ SU 吸管选取材质
         └─ 输出当前成本、预算差额、剩余预算与 CSV
 ```
 
-## 从第一代到第八代
+## 从第一代到第九代
 
-项目不是一次性生成，而是围绕真实使用反馈逐代修正。这里的“八代”按能力阶段划分，部分阶段包含多个补丁版本。
+项目不是一次性生成，而是围绕真实使用反馈逐代修正。这里的“九代”按能力阶段划分，部分阶段包含多个补丁版本。
 
 | 代际 | 对应版本 | 当时的主要问题 | 关键改进 | 形成的能力 |
 | --- | --- | --- | --- | --- |
@@ -101,6 +94,7 @@ SU 吸管选取材质
 | 第六代 | v0.7.1–v0.7.1.1 | 每次启动都要重新选表，`WALL-002` 等编码不能稳定命中 | 固定关联与一键更新；编码、名称、别名统一规范化索引 | 稳定价格同步 |
 | 第七代 | v0.7.2–v0.7.3 | 大模型等待时间长，修改价格也会重复扫描几何；只能看到已花金额 | 分批异步、空间剪枝、面积缓存、进度显示；增加总预算和剩余预算 | 性能可见与预算控制 |
 | 第八代 | v0.8.0 | 非标准材质仍需人工查表；AI 结果与上方预算状态曾不同步；需要兼容旧版 SU | DeepSeek 受限候选、本地回退、人工确认、审计历史；映射双写与合并读取；移除 Ruby 2.7 和新版 JS 专属语法 | 可信 AI 标准化与 SU 2020+ 兼容 |
+| 第九代 | v0.9.0 | SU 2020 Ruby 2.5 残余无尽区间语法；非等比缩放法线偏移；无 Excel 环境无法读 `.xlsx`；前端仅显示 Top-1 AI 候选且缺少高亮定位与撤销 | 修复 Ruby 2.5 兼容与 Newell 非等比缩放法线；懒加载三角剖分与进度节流；纯 Ruby 无 Excel 读取 `.xlsx`；Top-3 AI 卡片、色块、SU 模型高亮定位、恢复库价/解除映射、预算进度条、五项费用条与工具栏图标 | 高性能跨平台与完整交互闭环 |
 
 ### 第一代：基础面积预算
 
@@ -134,23 +128,32 @@ SketchUp 的一个 Face 可以同时具有正面材质和背面材质。如果�
 
 DeepSeek 仅接收 SU 材质名和当前价格库候选编码，不接收模型几何或项目预算。模型最多返回 3 个候选、理由和置信度，程序再次校验编码，用户确认后才计价。确认映射同时写入当前 SKP 和工作室词库，当前模型优先，避免“下方已确认、上方仍待确认”。本代还以 SketchUp 2020 为最低版本，兼容 Ruby 2.5 和 CEF 64 基线。
 
+### 第九代：跨平台、大模型提速与交互闭环（v0.9.0）
+
+针对实际工程模型和旧版 SketchUp 实机使用中的高频痛点，v0.9.0 做了全面升级：
+
+- **免 Excel 跨平台读表**：内置纯 Ruby `.xlsx` 解析器（基于标准库 `zlib` 与 `rexml`），无需安装 Microsoft Excel，WPS 与 macOS 均可秒读价格库；旧版 `.xls` 自动回退 `WIN32OLE`。
+- **大模型提速与精准算量**：引入“按需懒加载三角剖分 + 二维投影缓存”与 `120ms` 进度条节流；采用基于变换后顶点的 **Newell 法线算法**，彻底解决组件非等比缩放或斜切时的共面误差；改用唯一记录 ID 追踪重叠，消除重合面冲突。
+- **Top-3 AI 候选与开放兼容接口**：界面完整展示 Top-3 候选卡片（含置信度与推荐理由），支持点击卡片直接选中确认；默认支持 `deepseek-chat`，并开放自定义模型名与 OpenAI 兼容 API 地址。
+- **材质定位与可逆操作**：每行左侧显示材质真实色块，点击 **`定位`** 可在 SketchUp 视图中一键高亮选中对应面片/组件；新增 **`恢复库价`** 与 **`解除映射`**，改错可随时撤回。
+- **预算进度条与五项费用全览**：设置总预算后自动显示绿/黄/红三色消耗进度条，顶部完整展示材料、人工、机械、管理费、利润五项汇总，并新增 SketchUp **工具栏快捷图标**。
+
 ## 安装与使用
 
-1. 下载 [`su_material_budget_v0.8.0_SU2020_compatible.rbz`](./su_material_budget_v0.8.0_SU2020_compatible.rbz)。
-2. 在 SketchUp 中打开“扩展程序管理器”，选择“安装扩展程序”。
-3. 选择 RBZ，完成后重启 SketchUp。
-4. 打开“材质实时预算”，关联工作室 Excel/CSV 价格表。
+1. 下载 [`su_material_budget_v0.9.0_SU2020_compatible.rbz`](./su_material_budget_v0.9.0_SU2020_compatible.rbz)。
+2. 在 SketchUp 中打开 **扩展程序管理器 → 安装扩展程序**。
+3. 选择上述 `.rbz` 文件，完成后**重启 SketchUp**。
+4. 点击工具栏上的 **材质实时预算** 图标（或从 `扩展程序` 菜单打开），关联工作室 `.xlsx` / `.csv` 价格表。
 5. 保持插件窗口打开，用 SketchUp 吸管选取需要计价的材质。
-6. 对未匹配材质检查候选并人工确认，然后查看预算变化。
-7. 设置预算基准或项目总预算，最终导出完整预算 CSV。
+6. 对未匹配材质，可在 Top-3 AI 候选卡片中选择（或点击 **调用 DeepSeek 重荐**）并点击 **确认所选映射**。
+7. 可随时点击 **`定位`** 在模型中高亮核对，或设置项目总预算与预算基准，最终导出完整预算 CSV。
 
 ## 系统要求
 
-- SketchUp 2020 或更高版本。
-- Windows 为当前主要验证平台。
-- SketchUp 2020 使用 Ruby 2.5 与 CEF 64；仓库已提供静态兼容检查。
-- DeepSeek 推荐为可选功能；不可用时仍可使用本地候选和确定性预算功能。
-- Excel 导入依赖本机可用的 Excel/CSV 读取路径；CSV 可作为更稳定的跨环境格式。
+- SketchUp 2020 或更高版本（Windows / macOS）。
+- 完整兼容 Ruby 2.5 与 CEF 64（已移除 Ruby 2.6+ 无尽区间、Ruby 2.7 `filter_map` 及新版 JS 专属语法）。
+- DeepSeek / OpenAI 兼容接口为可选功能；未配置或离线时自动使用本地可解释候选。
+- `.xlsx` 与 `.csv` 价格表均支持内置直接读取，无需安装 Microsoft Excel；仅旧版 `.xls` 依赖 Windows Excel COM。
 
 ## AI、安全与数据边界
 
@@ -182,33 +185,45 @@ DeepSeek 仅接收 SU 材质名和当前价格库候选编码，不接收模型�
 
 ```text
 .
-├─ assets/                              README 截图
+├─ assets/                              README 截图与标志
 ├─ src/                                 SketchUp 插件源码
 │  ├─ su_material_budget.rb             扩展入口
 │  └─ su_material_budget/
-│     ├─ main.rb                        业务、AI、几何和预算逻辑
+│     ├─ main.rb                        业务、AI、几何、XLSX解析和预算逻辑
 │     ├─ dialog_v07.html                当前 HtmlDialog 界面
-│     └─ materials.json                 示例价格库
-├─ su_material_budget_v0.8.0_SU2020_compatible.rbz
+│     ├─ materials.json                 示例价格库
+│     ├─ toolbar_icon.svg               工具栏矢量图标
+│     ├─ toolbar_icon_24.png            工具栏小图标（24×24）
+│     └─ toolbar_icon_64.png            工具栏大图标（64×64）
+├─ su_material_budget_v0.9.0_SU2020_compatible.rbz
+├─ build_rbz.py                         v0.9.0 一键打包脚本
+├─ test_core_logic.py                   核心几何/算量/结构单元测试
+├─ validate_su2020_compat.mjs           Ruby 2.5 / CEF 64 兼容性检查
+├─ validate_v090.mjs                    v0.9.0 源码能力与安全边界检查
+├─ validate_v090_package.py             RBZ 包结构与核心标记检查
 ├─ 使用说明.md
-├─ validate_su2020_compat.mjs
-├─ validate_v080.mjs
-└─ validate_v080_package.py
+└─ LICENSE                              MIT 开源许可证
 ```
 
 ## 本地开发与检查
 
-本项目不需要额外构建框架。修改 `src/` 后，将入口文件和 `su_material_budget/` 目录一起压缩并把扩展名改为 `.rbz`，即可通过 SketchUp 扩展程序管理器安装。
+本项目不需要额外构建框架。修改 `src/` 后，运行 `build_rbz.py` 即可生成可安装的 `.rbz` 文件，并通过以下脚本完成全量自检：
 
 ```powershell
-# 前端语法、关键功能标记与价格库检查
-node validate_v080.mjs
+# 打包生成 v0.9.0 RBZ
+python build_rbz.py
+
+# 核心几何算法与 Ruby 结构测试
+python test_core_logic.py
 
 # SketchUp 2020：Ruby 2.5 / CEF 64 兼容性检查
 node validate_su2020_compat.mjs
 
+# 前端语法、关键功能标记与价格库检查
+node validate_v090.mjs
+
 # RBZ 包结构与关键能力检查
-python validate_v080_package.py
+python validate_v090_package.py
 ```
 
 上述脚本是静态与包结构检查，不能代替 SketchUp 2020 实机运行。
@@ -250,7 +265,7 @@ python validate_v080_package.py
 - 插件服务于方案阶段快速反馈，不替代正式工程量清单、施工图算量或造价审计。
 - 示例价格仅用于演示数据结构和工作流，不能直接用于真实项目结算。
 - 极复杂或非共面的空间碰撞不等同于共面饰面接触，当前重叠扣除主要面向共面表皮。
-- 当前仓库尚未加入明确的开源许可证；在权利范围确认前，不应默认按 MIT、Apache-2.0 等许可使用。
+- 本项目已补充 [MIT License](./LICENSE)。
 
 ## 致谢与参考
 
