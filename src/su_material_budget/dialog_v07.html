@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>材质实时预算 v0.9.0（SU 2020+）</title>
+  <style>
+    :root { color-scheme: light; --bg:#f4f6f8; --card:#fff; --text:#17232d; --muted:#667582; --line:#dce3e8; --brand:#156b82; --brand-dark:#0d4f61; --ok:#157347; --warn:#925f00; --warn-bg:#fff4d9; --danger:#b42318; --danger-bg:#fef3f2; --info-bg:#e8f4f7; --shadow:0 1px 3px rgba(16,24,40,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--text); background:var(--bg); font:13px/1.45 "Microsoft YaHei UI","PingFang SC",system-ui,sans-serif; }
+    button,input { font:inherit; }
+    .app { min-width:720px; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:18px; padding:15px 20px; color:#fff; background:linear-gradient(120deg,#0f4c5c,#1f7a8c); }
+    h1 { margin:0 0 3px; font-size:18px; }
+    .model-name { color:rgba(255,255,255,.78); }
+    .actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:7px; }
+    button { border:1px solid transparent; border-radius:6px; padding:7px 11px; cursor:pointer; }
+    .header-button { border-color:rgba(255,255,255,.35); color:#fff; background:rgba(255,255,255,.10); }
+    .header-button.primary { color:var(--brand-dark); background:#fff; }
+    .header-button:hover { background:rgba(255,255,255,.22); }
+    .header-button.primary:hover { background:#eaf5f7; }
+    main { padding:15px 20px 22px; }
+    .summary { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; margin-bottom:12px; }
+    .metric { min-width:0; border:1px solid var(--line); border-radius:8px; padding:11px 12px; background:var(--card); box-shadow:var(--shadow); }
+    .metric-label { margin-bottom:4px; color:var(--muted); font-size:11px; }
+    .metric-value { overflow:hidden; font-size:19px; font-weight:700; text-overflow:ellipsis; white-space:nowrap; }
+    .metric.primary .metric-value { color:var(--brand); }
+    .metric.delta .positive { color:var(--danger); }
+    .metric.delta .negative { color:var(--ok); }
+    .baseline-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:-2px 0 12px; color:var(--muted); font-size:11px; }
+    .budget-entry { display:flex; flex-direction:column; gap:8px; margin-bottom:12px; border:1px solid #80bdca; border-radius:8px; padding:11px 12px; background:#eaf6f8; box-shadow:var(--shadow); }
+    .budget-entry-top { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .budget-entry-copy { min-width:190px; }
+    .budget-entry-title { color:var(--brand-dark); font-weight:700; }
+    .budget-entry-hint { color:var(--muted); font-size:11px; }
+    .budget-entry-controls { display:flex; align-items:center; gap:7px; }
+    .budget-input { width:180px; border:1px solid #91aeb6; border-radius:6px; padding:7px 9px; text-align:right; background:#fff; }
+    .budget-unit { color:var(--muted); }
+    .budget-bar-wrap { display:none; align-items:center; gap:10px; }
+    .budget-bar-track { flex:1; overflow:hidden; height:8px; border-radius:999px; background:#cde4ea; }
+    .budget-bar-fill { width:0; height:100%; border-radius:inherit; background:var(--ok); transition:width .25s ease; }
+    .budget-bar-fill.warn { background:#d97706; }
+    .budget-bar-fill.over { background:var(--danger); }
+    .budget-bar-label { min-width:92px; text-align:right; font-size:11px; font-weight:700; color:var(--brand-dark); }
+    .breakdown-strip { display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin:-4px 0 10px; padding:7px 12px; border:1px solid var(--line); border-radius:7px; background:#fafcfd; color:var(--muted); font-size:11px; }
+    .breakdown-strip strong { color:var(--text); font-weight:600; }
+    .remaining-positive { color:var(--ok); } .remaining-negative { color:var(--danger); }
+    .link-card { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:12px; border:1px solid #b7d6de; border-radius:8px; padding:10px 12px; background:#eef8fa; }
+    .link-title { color:var(--brand-dark); font-weight:700; }
+    .link-path { max-width:720px; overflow:hidden; color:var(--muted); font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
+    .baseline-button,.ghost-button { border-color:var(--line); color:var(--brand-dark); background:#fff; padding:5px 9px; }
+    .message { display:none; margin-bottom:10px; border-radius:7px; padding:9px 11px; }
+    .notice { border:1px solid #f0d083; color:var(--warn); background:var(--warn-bg); }
+    .error { border:1px solid #fecdca; color:var(--danger); background:var(--danger-bg); }
+    .info { border:1px solid #a8d4df; color:var(--brand-dark); background:var(--info-bg); }
+    .capture-card { margin-bottom:12px; border:1px solid var(--line); border-radius:8px; padding:11px 12px; background:var(--card); box-shadow:var(--shadow); }
+    .ai-card { margin-bottom:12px; border:1px solid #bfc5e8; border-radius:8px; padding:11px 12px; background:#f5f4ff; box-shadow:var(--shadow); }
+    .ai-settings { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .ai-controls { display:flex; align-items:center; gap:7px; }
+    .ai-key { width:250px; border:1px solid #aeb6d8; border-radius:6px; padding:7px 9px; }
+    #deepseek-model { width:175px; margin:0; }
+    .ai-panel { margin-top:5px; border-left:3px solid #6b62b5; padding:6px 7px; color:#454064; background:#f7f6ff; font-size:11px; text-align:left; }
+    .ai-candidates { display:flex; flex-direction:column; gap:4px; margin:5px 0 6px; }
+    .ai-candidate { border:1px solid #d7d4ef; border-radius:5px; padding:5px 7px; background:#fff; cursor:pointer; }
+    .ai-candidate:hover { border-color:#8a82cc; }
+    .ai-candidate.active { border-color:#5b52a3; background:#efedff; }
+    .ai-candidate-head { display:flex; justify-content:space-between; gap:6px; font-weight:600; color:#2b2747; }
+    .ai-reason { margin:2px 0 0; color:var(--muted); white-space:normal; line-height:1.35; }
+    .ai-select { width:100%; margin-bottom:5px; border:1px solid #b8c1ca; border-radius:5px; padding:5px; background:#fff; }
+    .ai-buttons { display:flex; flex-wrap:wrap; gap:5px; }
+    .confidence { color:#5b52a3; font-weight:700; }
+    .mat-cell { display:flex; align-items:center; gap:7px; min-width:0; }
+    .swatch { flex:0 0 13px; width:13px; height:13px; border-radius:3px; border:1px solid rgba(0,0,0,.18); }
+    .mat-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; flex:1; min-width:0; }
+    .mini-link { border:0; padding:1px 5px; border-radius:4px; font-size:11px; color:var(--brand); background:rgba(21,107,130,.08); cursor:pointer; }
+    .mini-link:hover { background:rgba(21,107,130,.18); }
+    .mini-link.danger { color:var(--danger); background:rgba(180,35,24,.08); }
+    .mini-link.danger:hover { background:rgba(180,35,24,.16); }
+    .price-cell-wrap { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
+    .history-card { margin-top:12px; border:1px solid var(--line); border-radius:8px; padding:11px 12px; background:var(--card); box-shadow:var(--shadow); }
+    .history-card table { min-width:760px; }
+    .progress-card { margin-bottom:12px; border:1px solid #b7d6de; border-radius:8px; padding:11px 12px; background:var(--card); box-shadow:var(--shadow); }
+    .progress-head { display:flex; justify-content:space-between; gap:12px; margin-bottom:7px; }
+    .progress-percent { color:var(--brand); font-size:16px; font-weight:700; }
+    .progress-track { overflow:hidden; height:9px; border-radius:999px; background:#dfe9ec; }
+    .progress-fill { width:0; height:100%; border-radius:inherit; background:linear-gradient(90deg,#1f7a8c,#39a0b5); transition:width .18s ease; }
+    .progress-detail { display:flex; justify-content:space-between; gap:12px; margin:7px 0; color:var(--muted); font-size:11px; }
+    .progress-table { min-width:0; table-layout:auto; }
+    .progress-table th,.progress-table td { position:static; padding:5px 7px; text-align:left; }
+    .progress-table th:last-child,.progress-table td:last-child { text-align:right; }
+    .step-done { color:var(--ok); } .step-active { color:var(--brand); font-weight:700; } .step-wait { color:var(--muted); }
+    .capture-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
+    .capture-hint { margin-left:8px; color:var(--muted); font-size:11px; }
+    .material-chips { display:flex; flex-wrap:wrap; gap:6px; }
+    .material-chip { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:5px 7px 5px 10px; color:var(--brand-dark); background:#e4f1f4; }
+    .chip-remove { border:0; border-radius:50%; padding:0; width:18px; height:18px; color:#45616b; background:rgba(255,255,255,.72); }
+    .capture-empty { color:var(--muted); }
+    .table-card { overflow:auto; border:1px solid var(--line); border-radius:8px; background:var(--card); box-shadow:var(--shadow); }
+    table { width:100%; min-width:980px; border-collapse:collapse; table-layout:fixed; }
+    th { position:sticky; top:0; z-index:1; padding:9px 8px; color:#43515d; background:#edf2f4; font-size:11px; font-weight:600; text-align:right; }
+    th:first-child,th:nth-child(2),td:first-child,td:nth-child(2) { text-align:left; }
+    td { border-top:1px solid #edf0f2; padding:8px; text-align:right; vertical-align:middle; }
+    tbody tr:hover { background:#f8fafb; }
+    .material-name,.mapping { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .material-name { font-weight:600; }
+    .mapping { color:var(--muted); font-size:11px; }
+    .status { display:inline-block; border-radius:999px; padding:2px 7px; font-size:11px; }
+    .status.matched { color:#11633d; background:#e7f5ed; }
+    .status.manual { color:#0d5e78; background:#e4f1f4; }
+    .status.unmatched { color:var(--warn); background:var(--warn-bg); }
+    .price-input { width:100%; min-width:78px; border:1px solid #bdc7d1; border-radius:5px; padding:5px 6px; text-align:right; background:#fff; }
+    .price-input:focus { border-color:var(--brand); outline:2px solid rgba(23,107,135,.13); }
+    .zero-price { color:var(--warn); }
+    .empty { padding:38px 20px; color:var(--muted); text-align:center!important; }
+    footer { display:flex; justify-content:space-between; gap:18px; padding-top:10px; color:var(--muted); font-size:11px; }
+    @media (max-width:900px) { .summary { grid-template-columns:repeat(3,1fr); } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div><h1>材质实时预算 <small>v0.9.0 · SU 2020+</small></h1><div id="model-name" class="model-name">正在读取模型…</div></div>
+      <div class="actions">
+        <button class="header-button primary" type="button" onclick="sketchup.update_linked_price_library()">更新价格</button>
+        <button class="header-button" type="button" onclick="sketchup.link_price_library()">关联价格表</button>
+        <button class="header-button" type="button" onclick="sketchup.refresh()">重新计算面积</button>
+        <button class="header-button" type="button" onclick="sketchup.export_csv()">导出完整预算表</button>
+      </div>
+    </header>
+    <main>
+      <section class="link-card"><div><div class="link-title" id="link-title">正在读取关联价格表…</div><div class="link-path" id="link-path"></div></div><button class="ghost-button" type="button" onclick="sketchup.link_price_library()">更换文件</button></section>
+      <section class="ai-card"><div class="ai-settings"><div><strong>DeepSeek / OpenAI 兼容 AI 材质推荐</strong><div id="ai-status" class="capture-hint">API Key 仅保存在本次 SketchUp 运行内存，不写入模型</div></div><div class="ai-controls"><input id="deepseek-key" class="ai-key" type="password" autocomplete="off" placeholder="粘贴 API Key"><input id="deepseek-model" class="ai-select" list="ai-model-presets" placeholder="模型名（如 deepseek-chat）" value="deepseek-chat"><datalist id="ai-model-presets"><option value="deepseek-chat"></option><option value="deepseek-reasoner"></option><option value="deepseek-v4-flash"></option><option value="deepseek-v4-pro"></option></datalist><input id="deepseek-endpoint" class="ai-key" type="url" autocomplete="off" placeholder="API 地址（留空默认 DeepSeek）"><button class="ghost-button" type="button" onclick="configureDeepSeek()">启用</button></div></div></section>
+      <section class="budget-entry">
+        <div class="budget-entry-top">
+          <div class="budget-entry-copy"><div class="budget-entry-title">我的项目总预算</div><div id="budget-entry-hint" class="budget-entry-hint">按人民币“元”输入，例如二百万元填写 2000000</div></div>
+          <div class="budget-entry-controls"><span>¥</span><input id="project-budget-input" class="budget-input" type="number" min="0.01" step="1000" placeholder="例如 2000000"><span class="budget-unit">元</span><button class="header-button primary" type="button" onclick="saveProjectBudget()">保存预算</button></div>
+        </div>
+        <div id="budget-bar-wrap" class="budget-bar-wrap">
+          <div class="budget-bar-track"><div id="budget-bar-fill" class="budget-bar-fill"></div></div>
+          <span id="budget-bar-label" class="budget-bar-label">0.0%</span>
+        </div>
+      </section>
+      <section class="summary">
+        <div class="metric primary"><div class="metric-label">当前计算成本</div><div id="total-budget" class="metric-value">¥0.00</div></div>
+        <div class="metric"><div class="metric-label">剩余可用预算</div><div id="remaining-budget" class="metric-value">未设置</div></div>
+        <div class="metric delta"><div class="metric-label">较预算基准</div><div id="budget-delta" class="metric-value">未设置</div></div>
+        <div class="metric"><div class="metric-label">材料费</div><div id="material-cost" class="metric-value">¥0.00</div></div>
+        <div class="metric"><div class="metric-label">人工费</div><div id="labor-cost" class="metric-value">¥0.00</div></div>
+        <div class="metric"><div class="metric-label">计价面积</div><div id="total-area" class="metric-value">0.000 ㎡</div></div>
+      </section>
+      <div class="breakdown-strip">
+        <span>五项费用拆分：</span>
+        <span>材料 <strong id="bd-material">¥0.00</strong></span>
+        <span>人工 <strong id="bd-labor">¥0.00</strong></span>
+        <span>机械 <strong id="bd-machinery">¥0.00</strong></span>
+        <span>管理费 <strong id="bd-management">¥0.00</strong></span>
+        <span>利润 <strong id="bd-profit">¥0.00</strong></span>
+      </div>
+      <div class="baseline-row"><span id="baseline-note">尚未设置预算基准</span><button class="baseline-button" type="button" onclick="sketchup.set_baseline()">将当前预算设为基准</button></div>
+      <div id="notice" class="message notice"></div><div id="info" class="message info"></div><div id="error" class="message error"></div>
+      <section class="progress-card">
+        <div class="progress-head"><strong>面积计算进度</strong><span id="progress-percent" class="progress-percent">0.0%</span></div>
+        <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+        <div class="progress-detail"><span id="progress-detail">等待开始</span><span id="progress-meta">0 个计价面 · 0.0 秒</span></div>
+        <table class="progress-table"><thead><tr><th>阶段</th><th>状态</th><th>进度</th></tr></thead><tbody id="progress-steps"><tr><td>扫描已吸取材质面</td><td class="step-wait">等待中</td><td>0%</td></tr></tbody></table>
+      </section>
+      <section class="capture-card">
+        <div class="capture-head"><div><strong>参与预算的吸取材质</strong><span class="capture-hint">窗口打开时，在SU里用吸管选择材质</span></div><button class="ghost-button" type="button" onclick="sketchup.clear_materials()">清空</button></div>
+        <div id="selected-materials" class="material-chips"><span class="capture-empty">尚未吸取材质</span></div>
+      </section>
+      <section class="table-card">
+        <table>
+          <colgroup><col style="width:16%"><col style="width:18%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:13%"><col style="width:13%"></colgroup>
+          <thead><tr><th>SU材质</th><th>标准匹配</th><th>状态</th><th>面积（㎡）</th><th>材料单价</th><th>人工单价</th><th>综合单价（可改）</th><th>小计（元）</th></tr></thead>
+          <tbody id="rows"><tr><td class="empty" colspan="8">已吸取材质在模型中暂时没有可计价外表皮</td></tr></tbody>
+        </table>
+      </section>
+      <section class="history-card"><div class="capture-head"><div><strong>AI建议—人工选择—最终结果</strong><span id="mapping-count" class="capture-hint">工作室词库：0条</span></div></div><div class="table-card"><table><thead><tr><th>SU材质</th><th>AI建议</th><th>人工选择</th><th>最终结果</th><th>确认时间</th></tr></thead><tbody id="mapping-history"><tr><td class="empty" colspan="5">尚无人工确认记录</td></tr></tbody></table></div></section>
+      <footer><span id="library-note">价格库：0条</span><span id="updated-at"></span></footer>
+    </main>
+  </div>
+  <script>
+    (() => {
+      const money = new Intl.NumberFormat('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+      const escapeHtml = (value) => String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+      const setMessage = (id,message) => { const box=document.getElementById(id); box.textContent=message||''; box.style.display=message?'block':'none'; };
+      const savePrice = (name,input) => { const value=Number(input.value); if(!Number.isFinite(value)||value<0){input.focus();window.MaterialBudget.error('综合单价必须是大于或等于0的数字。');return;} sketchup.save_price(name,value); };
+      window.saveProjectBudget = () => { const input=document.getElementById('project-budget-input'); const value=Number(input.value); if(!Number.isFinite(value)||value<=0){input.focus();window.MaterialBudget.error('项目总预算必须是大于0的数字，例如 2000000。');return;} sketchup.save_project_budget(value); };
+      window.configureDeepSeek = () => { const key=document.getElementById('deepseek-key').value.trim(); const model=document.getElementById('deepseek-model').value.trim(); const endpoint=document.getElementById('deepseek-endpoint').value.trim(); if(!key){window.MaterialBudget.error('请在插件中填写 API Key。');return;} sketchup.configure_deepseek(key,model,endpoint); };
+      let latestData={price_library_options:[]};
+      const optionHtml=(selectedCode)=>latestData.price_library_options.map((option)=>`<option value="${escapeHtml(option.standard_code)}" ${option.standard_code===selectedCode?'selected':''}>${escapeHtml(option.standard_code)} · ${escapeHtml(option.standard_name)} · ${escapeHtml(option.category)}</option>`).join('');
+      const suggestionHtml=(material,suggestions,provider)=>{
+        const list=Array.isArray(suggestions)?suggestions.slice(0,3):[];
+        const top=list[0];
+        if(!top)return '<span class="mapping">没有可推荐的标准材料</span>';
+        const cards=list.map((s,idx)=>`<div class="ai-candidate${idx===0?' active':''}" data-code="${escapeHtml(s.standard_code)}" data-confidence="${Number(s.confidence)}" data-reason="${escapeHtml(s.reason)}"><div class="ai-candidate-head"><span>#${idx+1} ${escapeHtml(s.standard_code)} · ${escapeHtml(s.standard_name)}</span><span class="confidence">${Number(s.confidence)}%</span></div><div class="ai-reason">${escapeHtml(s.reason)}</div></div>`).join('');
+        return `<div class="ai-title"><span class="confidence">${escapeHtml(provider)} · Top-${list.length} 候选</span></div><div class="ai-candidates">${cards}</div><select class="ai-select">${optionHtml(top.standard_code)}</select><div class="ai-buttons"><button class="ghost-button ai-confirm" type="button">确认所选映射</button><button class="ghost-button ai-refresh" type="button">调用 DeepSeek 重荐</button></div>`;
+      };
+      const bindAiPanel=(panel)=>{
+        const material=panel.dataset.material;
+        const select=panel.querySelector('.ai-select');
+        const refreshButton=panel.querySelector('.ai-refresh');
+        const confirmButton=panel.querySelector('.ai-confirm');
+        const cards=panel.querySelectorAll('.ai-candidate');
+        cards.forEach((card)=>card.addEventListener('click',()=>{
+          cards.forEach((c)=>c.classList.remove('active'));
+          card.classList.add('active');
+          if(select)select.value=card.dataset.code;
+          panel.dataset.suggestedCode=card.dataset.code;
+          panel.dataset.confidence=card.dataset.confidence;
+          panel.dataset.reason=card.dataset.reason;
+        }));
+        if(refreshButton)refreshButton.addEventListener('click',()=>sketchup.request_ai_recommendation(material));
+        if(confirmButton)confirmButton.addEventListener('click',()=>{sketchup.confirm_material_mapping(material,select.value,panel.dataset.suggestedCode,Number(panel.dataset.confidence),panel.dataset.reason);});
+      };
+      window.MaterialBudget = {
+        aiConfigured(model){document.getElementById('deepseek-key').value='';document.getElementById('ai-status').textContent=`已启用 ${model} · 密钥只在本次运行内存中`;setMessage('error','');},
+        aiLoading(material){const panel=[...document.querySelectorAll('.ai-panel')].find((node)=>node.dataset.material===material);if(panel)panel.innerHTML='<span class="step-active">正在调用 DeepSeek 分析…</span>';},
+        aiRecommendation(payload){const panel=[...document.querySelectorAll('.ai-panel')].find((node)=>node.dataset.material===payload.material_name);if(!panel||!payload.suggestions||!payload.suggestions.length)return;const suggestion=payload.suggestions[0];panel.dataset.suggestedCode=suggestion.standard_code;panel.dataset.confidence=suggestion.confidence;panel.dataset.reason=suggestion.reason;panel.innerHTML=suggestionHtml(payload.material_name,payload.suggestions,payload.provider);bindAiPanel(panel);},
+        progress(data) {
+          const percent=Math.max(0,Math.min(100,Number(data.overall_percent)||0));
+          document.getElementById('progress-percent').textContent=`${percent.toFixed(1)}%`;
+          document.getElementById('progress-fill').style.width=`${percent}%`;
+          document.getElementById('progress-detail').textContent=data.current_material?`${data.detail} · 当前：${data.current_material}`:data.detail;
+          document.getElementById('progress-meta').textContent=`${data.selected_faces} 个计价面 · ${Number(data.elapsed_seconds).toFixed(1)} 秒`;
+          document.getElementById('progress-steps').innerHTML=data.steps.map((step)=>{const cls=step.status==='已完成'?'step-done':(step.status==='进行中'?'step-active':'step-wait');return `<tr><td>${escapeHtml(step.name)}</td><td class="${cls}">${escapeHtml(step.status)}</td><td>${Number(step.percent)}%</td></tr>`;}).join('');
+        },
+        update(data) {
+          latestData=data;
+          document.getElementById('model-name').textContent=data.model_name;
+          document.getElementById('total-budget').textContent=`¥${money.format(data.total_budget)}`;
+          const remaining=document.getElementById('remaining-budget'); remaining.className='metric-value';
+          if(data.remaining_budget===null||data.remaining_budget===undefined){remaining.textContent='未设置';}
+          else {const value=Number(data.remaining_budget);remaining.textContent=`${value<0?'-':''}¥${money.format(Math.abs(value))}`;remaining.classList.add(value>=0?'remaining-positive':'remaining-negative');}
+          const projectInput=document.getElementById('project-budget-input');
+          if(data.project_budget!==null&&data.project_budget!==undefined&&document.activeElement!==projectInput) projectInput.value=Number(data.project_budget).toFixed(2);
+          document.getElementById('budget-entry-hint').textContent=data.project_budget?`预算已使用 ${Number(data.budget_usage_percent).toFixed(1)}% · 输入新金额可随时调整`:'按人民币“元”输入，例如二百万元填写 2000000';
+          const barWrap=document.getElementById('budget-bar-wrap');
+          const barFill=document.getElementById('budget-bar-fill');
+          const barLabel=document.getElementById('budget-bar-label');
+          if(data.project_budget&&data.budget_usage_percent!==null&&data.budget_usage_percent!==undefined){
+            const pct=Number(data.budget_usage_percent);
+            barWrap.style.display='flex';
+            barFill.style.width=`${Math.min(100,Math.max(0,pct))}%`;
+            barFill.className='budget-bar-fill'+(pct>100?' over':(pct>=85?' warn':''));
+            barLabel.textContent=pct>100?`已超支 ${(pct-100).toFixed(1)}%`:`已用 ${pct.toFixed(1)}%`;
+            barLabel.style.color=pct>100?'var(--danger)':(pct>=85?'#b45309':'var(--ok)');
+          } else { barWrap.style.display='none'; }
+          document.getElementById('material-cost').textContent=`¥${money.format(data.total_material_cost)}`;
+          document.getElementById('labor-cost').textContent=`¥${money.format(data.total_labor_cost)}`;
+          document.getElementById('bd-material').textContent=`¥${money.format(data.total_material_cost||0)}`;
+          document.getElementById('bd-labor').textContent=`¥${money.format(data.total_labor_cost||0)}`;
+          document.getElementById('bd-machinery').textContent=`¥${money.format(data.total_machinery_cost||0)}`;
+          document.getElementById('bd-management').textContent=`¥${money.format(data.total_management_cost||0)}`;
+          document.getElementById('bd-profit').textContent=`¥${money.format(data.total_profit_cost||0)}`;
+          document.getElementById('total-area').textContent=`${Number(data.total_area_m2).toFixed(3)} ㎡`;
+          document.getElementById('library-note').textContent=`价格库：${data.price_library_count} 条 · 已吸取 ${data.selected_materials.length} 种`;
+          document.getElementById('mapping-count').textContent=`工作室词库：${data.studio_mapping_count} 条`;
+          document.getElementById('deepseek-model').value=data.deepseek_model||'deepseek-chat';
+          const endpointInput=document.getElementById('deepseek-endpoint');
+          if(endpointInput&&document.activeElement!==endpointInput&&data.deepseek_endpoint)endpointInput.value=data.deepseek_endpoint;
+          if(data.deepseek_configured)document.getElementById('ai-status').textContent=`已启用 ${data.deepseek_model} · 密钥只在本次运行内存中`;
+          document.getElementById('updated-at').textContent=`更新：${data.updated_at}`;
+          document.getElementById('link-title').textContent=data.linked_file_exists?`已关联：${data.linked_file_name}`:(data.linked_price_file?'关联文件已移动或不存在':'尚未关联价格表');
+          document.getElementById('link-path').textContent=data.linked_price_file?`${data.linked_price_file}${data.linked_synced_at?` · 上次同步 ${data.linked_synced_at}（${data.linked_row_count}条）`:' · 尚未点击更新'}`:'点击“关联价格表”选择一次，以后只需点击“更新价格”。';
+          setMessage('error','');
+          const delta=document.getElementById('budget-delta'); delta.className='metric-value';
+          if(data.budget_delta===null||data.budget_delta===undefined){delta.textContent='未设置';document.getElementById('baseline-note').textContent='尚未设置预算基准';}
+          else {const value=Number(data.budget_delta);delta.textContent=`${value>=0?'+':'-'}¥${money.format(Math.abs(value))}`;if(value>0)delta.classList.add('positive');if(value<0)delta.classList.add('negative');document.getElementById('baseline-note').textContent=`基准 ¥${money.format(data.baseline_budget)} · ${data.baseline_captured_at}`;}
+          const selectedBox=document.getElementById('selected-materials');
+          if(data.selected_materials.length){selectedBox.innerHTML=data.selected_materials.map((name)=>{const safeName=escapeHtml(name);return `<span class="material-chip">${safeName}<button class="chip-remove" type="button" data-material="${safeName}" title="移除">×</button></span>`;}).join('');selectedBox.querySelectorAll('.chip-remove').forEach((button)=>button.addEventListener('click',()=>sketchup.remove_material(button.dataset.material)));}
+          else selectedBox.innerHTML='<span class="capture-empty">尚未吸取材质</span>';
+          const messages=[];
+          if(!data.selected_materials.length)messages.push('请保持窗口打开，再用SU吸管选择要计价的材质。');
+          if(data.unmatched_count>0)messages.push(`有 ${data.unmatched_count} 种材质等待AI推荐和人工确认。`);
+          if(data.unpriced_count>0)messages.push(`有 ${data.unpriced_count} 种材质综合单价为0，已暂按0元计算。`);
+          if(data.excluded_contact_faces>0)messages.push(`已从 ${data.excluded_contact_faces} 个面扣除重叠面积 ${Number(data.excluded_contact_area_m2).toFixed(3)}㎡。`);
+          if(data.skipped_entities>0)messages.push(`扫描时跳过 ${data.skipped_entities} 个异常实体。`);
+          setMessage('notice',messages.join(' '));
+          const history=document.getElementById('mapping-history');history.innerHTML=data.mapping_history.length?data.mapping_history.map((item)=>`<tr><td>${escapeHtml(item.source_material)}</td><td>${escapeHtml(item.ai_suggestion)} · ${Number(item.ai_confidence)}%<div class="mapping">${escapeHtml(item.ai_reason)}</div></td><td>${escapeHtml(item.human_choice)}</td><td>${escapeHtml(item.final_result)}</td><td>${escapeHtml(item.confirmed_at)}</td></tr>`).join(''):'<tr><td class="empty" colspan="5">尚无人工确认记录</td></tr>';
+          const rows=document.getElementById('rows');
+          if(!data.materials.length){rows.innerHTML='<tr><td class="empty" colspan="8">已吸取材质在模型中暂时没有可计价外表皮</td></tr>';return;}
+          rows.innerHTML=data.materials.map((item)=>{
+            const name=escapeHtml(item.name);
+            const swatchColor=escapeHtml(item.color_hex||'#cbd5e1');
+            let mapping;
+            if(item.standard_name){
+              const unlinkBtn=item.has_studio_mapping?` <button class="mini-link danger mapping-remove" type="button" data-material="${name}" title="解除工作室映射">解除映射</button>`:'';
+              mapping=`<div>${escapeHtml(item.standard_name)}</div><div class="mapping">${escapeHtml(item.standard_code)} · ${escapeHtml(item.category)}${unlinkBtn}</div>`;
+            } else {
+              const suggestions=Array.isArray(item.ai_suggestions)?item.ai_suggestions:[];
+              const suggestion=suggestions[0];
+              mapping=suggestion?`<div class="ai-panel" data-material="${name}" data-suggested-code="${escapeHtml(suggestion.standard_code)}" data-confidence="${Number(suggestion.confidence)}" data-reason="${escapeHtml(suggestion.reason)}">${suggestionHtml(item.name,suggestions,'本地初筛')}</div>`:'<span class="mapping">没有可推荐的标准材料</span>';
+            }
+            const statusClass=item.match_status==='已匹配'||item.match_status==='工作室映射'?'matched':(item.match_status==='手动定价'?'manual':'unmatched');
+            const zeroClass=Number(item.unit_price)===0?' zero-price':'';
+            const resetPriceBtn=item.has_manual_override?`<button class="mini-link price-reset" type="button" data-material="${name}" title="清除手动单价并恢复价格库拆分">恢复库价</button>`:'';
+            return `<tr><td title="${name}"><div class="mat-cell"><span class="swatch" style="background:${swatchColor}"></span><span class="mat-label">${name}</span><button class="mini-link mat-locate" type="button" data-material="${name}" title="在 SketchUp 中高亮选中该材质">定位</button></div></td><td>${mapping}</td><td><span class="status ${statusClass}">${escapeHtml(item.match_status)}</span></td><td>${Number(item.area_m2).toFixed(3)}</td><td>${money.format(item.material_unit_price)}</td><td>${money.format(item.labor_unit_price)}</td><td><div class="price-cell-wrap"><input class="price-input${zeroClass}" type="number" min="0" step="0.01" value="${Number(item.unit_price).toFixed(2)}" data-material="${name}">${resetPriceBtn}</div></td><td class="${zeroClass}">${money.format(item.subtotal)}</td></tr>`;
+          }).join('');
+          rows.querySelectorAll('.price-input').forEach((input)=>{input.addEventListener('change',()=>savePrice(input.dataset.material,input));input.addEventListener('keydown',(event)=>{if(event.key==='Enter')input.blur();});});
+          rows.querySelectorAll('.mat-locate').forEach((btn)=>btn.addEventListener('click',()=>sketchup.highlight_material(btn.dataset.material)));
+          rows.querySelectorAll('.price-reset').forEach((btn)=>btn.addEventListener('click',()=>sketchup.clear_material_price(btn.dataset.material)));
+          rows.querySelectorAll('.mapping-remove').forEach((btn)=>btn.addEventListener('click',()=>sketchup.remove_material_mapping(btn.dataset.material)));
+          rows.querySelectorAll('.ai-panel').forEach(bindAiPanel);
+        },
+        error(message){setMessage('error',message);},
+        info(message){setMessage('info',message);}
+      };
+      document.addEventListener('DOMContentLoaded',()=>sketchup.ready());
+    })();
+  </script>
+</body>
+</html>
